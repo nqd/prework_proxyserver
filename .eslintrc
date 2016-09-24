@@ -7,7 +7,7 @@
   "rules": {
     "curly": [2, "multi-line"],
     "no-throw-literal": 1,
-    "strict": "error",
+    "strict": "off",
     "semi": [2, "never"],
     "quotes": [2, "single"],
     "no-var": 1,
