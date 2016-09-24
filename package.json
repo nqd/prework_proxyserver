@@ -1,0 +1,15 @@
+{
+  "name": "prework_proxyserver",
+  "version": "1.0.0",
+  "description": "Prework for Nodejs Course",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/nqd/prework_proxyserver"
+  },
+  "author": "nqdinh",
+  "license": "ISC"
+}
