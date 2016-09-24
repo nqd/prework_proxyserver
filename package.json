@@ -14,9 +14,11 @@
   "author": "nqdinh",
   "license": "ISC",
   "devDependencies": {
+    "babel-eslint": "^6.1.2",
     "eslint": "^3.6.0"
   },
   "dependencies": {
-    "nodemon": "^1.10.2"
+    "nodemon": "^1.10.2",
+    "request": "^2.75.0"
   }
 }
