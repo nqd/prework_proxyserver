@@ -4,6 +4,7 @@
   "description": "Prework for Nodejs Course",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon index.js",
     "test": "npm run test"
   },
   "repository": {
@@ -11,5 +12,11 @@
     "url": "github.com/nqd/prework_proxyserver"
   },
   "author": "nqdinh",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^3.6.0"
+  },
+  "dependencies": {
+    "nodemon": "^1.10.2"
+  }
 }
