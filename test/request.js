@@ -1,5 +1,3 @@
-'use strict'
-
 let server = require('../index.js')
 
 describe('Proxy server', () => {

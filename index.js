@@ -1,5 +1,3 @@
-'use strict'
-
 let http = require('http')
 let request = require('request')
 let destinationUrl = '127.0.0.1:8000'
