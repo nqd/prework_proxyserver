@@ -11,7 +11,7 @@ http.createServer((req, res) => {
     req.pipe(res)
 }).listen(8000)
 
-http.createServer((req, res) => {
+let proxyServer = http.createServer((req, res) => {
     console.log(`Proxying request to: ${destinationUrl + req.url}`)
     // Proxy code here
     let options = {
@@ -21,3 +21,5 @@ http.createServer((req, res) => {
     }
     req.pipe(request(options)).pipe(res)
 }).listen(8001)
+
+module.exports = proxyServer
