@@ -19,10 +19,10 @@ http.createServer((req, res) => {
 
 let proxyServer = http.createServer((req, res) => {
     console.log(`Proxying request to: ${destinationUrl + req.url}`)
-    // Proxy code here
+    // x-destination-url overrides the destinationUrl
     let options = {
         headers: req.headers,
-        url: `${destinationUrl}${req.url}`,
+        url: req.headers['x-destination-url'] || `${destinationUrl}${req.url}`,
         method: req.method
     }
     req.pipe(request(options)).pipe(res)
