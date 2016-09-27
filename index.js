@@ -2,7 +2,13 @@
 
 let http = require('http')
 let request = require('request')
-let destinationUrl = '127.0.0.1:8000'
+
+let argv = require('yargs')
+    .default('host', '127.0.0.1')
+    .argv
+let scheme = 'http://'
+let port = argv.port || (argv.host === '127.0.0.1' ? 8000 : 80)
+let destinationUrl = argv.url || scheme + argv.host + ':' + port
 
 http.createServer((req, res) => {
     for (let header in req.headers) {
@@ -16,7 +22,7 @@ let proxyServer = http.createServer((req, res) => {
     // Proxy code here
     let options = {
         headers: req.headers,
-        url: `http://${destinationUrl}${req.url}`,
+        url: `${destinationUrl}${req.url}`,
         method: req.method
     }
     req.pipe(request(options)).pipe(res)

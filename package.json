@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "nodemon": "^1.10.2",
-    "request": "^2.75.0"
+    "request": "^2.75.0",
+    "yargs": "^3.32.0"
   }
 }
