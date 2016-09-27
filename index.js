@@ -34,9 +34,10 @@ let proxyServer = http.createServer((req, res) => {
         method: req.method
     }
 
-    // Log the req headers and content
-    process.stdout.write('\n\n' + JSON.stringify(req.headers) + '\n')
-    logStream.write('Request headers: ' + JSON.stringify(req.headers) + '\n')
+    // Log the req headers
+    let log = new Date().toISOString() + ': ' + JSON.stringify(req.headers) + '\n'
+    process.stdout.write(log)
+    logStream.write(log)
 
     req.pipe(request(options)).pipe(res)
 }).listen(8001)
