@@ -14,7 +14,9 @@ npm test        // run tests
 npm run start   // run the proxy and actual echo server
 ```
 
-[![asciicast](https://asciinema.org/a/cgpemafskkd396k94jqqnd8dc.png)](https://asciinema.org/a/cgpemafskkd396k94jqqnd8dc)
+![](https://raw.githubusercontent.com/nqd/prework_proxyserver/master/nqdinh-submission.gif)
+
+Another version of the [walkthough in asciicast](https://asciinema.org/a/cgpemafskkd396k94jqqnd8dc)
 
 ## Say
 
