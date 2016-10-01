@@ -5,7 +5,26 @@ let request = require('request')
 
 // arg
 let argv = require('yargs')
-    .default('host', '127.0.0.1')
+    .usage('Usage: node $0 [options]')
+    .options({
+      'p': {
+        alias: 'port',
+        describe: 'Specify a forwarding port',
+        type: 'number'
+      },
+      'x': {
+        alias: 'host',
+        default: '127.0.0.1',
+        describe: 'Specify a forwarding host',
+        type: 'string'
+      },
+      'l': {
+        alias: 'logfile',
+        describe: 'Specify a log file',
+        type: 'string'
+      }
+    })
+    .help('h').alias('h', 'help')
     .argv
 let scheme = 'http://'
 let port = argv.port || (argv.host === '127.0.0.1' ? 8000 : 80)
