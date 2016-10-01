@@ -18,6 +18,11 @@ let argv = require('yargs')
         describe: 'Specify a forwarding host',
         type: 'string'
       },
+      'u': {
+        alias: 'url',
+        describe: 'Specify a forwarding destination',
+        type: 'string'
+      },
       'l': {
         alias: 'logfile',
         describe: 'Specify a log file',
