@@ -14,7 +14,7 @@ let destinationUrl = argv.url || scheme + argv.host + ':' + port
 // log
 let path = require('path')
 let fs = require('fs')
-let logPath = argv.log && path.join(__dirname, argv.log)
+let logPath = argv.logfile && path.join(__dirname, argv.logfile)
 let logStream = logPath ? fs.createWriteStream(logPath) : process.stdout
 
 http.createServer((req, res) => {
@@ -34,12 +34,13 @@ let proxyServer = http.createServer((req, res) => {
         method: req.method
     }
 
-    // Log the req headers
-    let log = new Date().toISOString() + ': ' + JSON.stringify(req.headers) + '\n'
-    process.stdout.write(log)
-    logStream.write(log)
+    let outboundResponse = request(options)
+    req.pipe(outboundResponse)
+    req.pipe(logStream, {end: false})
 
-    req.pipe(request(options)).pipe(res)
+    // log the response
+    outboundResponse.pipe(logStream, {end: false})
+    outboundResponse.pipe(res)
 }).listen(8001)
 
 module.exports = proxyServer
