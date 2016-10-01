@@ -5,7 +5,31 @@ let request = require('request')
 
 // arg
 let argv = require('yargs')
-    .default('host', '127.0.0.1')
+    .usage('Usage: node $0 [options]')
+    .options({
+      'p': {
+        alias: 'port',
+        describe: 'Specify a forwarding port',
+        type: 'number'
+      },
+      'x': {
+        alias: 'host',
+        default: '127.0.0.1',
+        describe: 'Specify a forwarding host',
+        type: 'string'
+      },
+      'u': {
+        alias: 'url',
+        describe: 'Specify a forwarding destination',
+        type: 'string'
+      },
+      'l': {
+        alias: 'logfile',
+        describe: 'Specify a log file',
+        type: 'string'
+      }
+    })
+    .help('h').alias('h', 'help')
     .argv
 let scheme = 'http://'
 let port = argv.port || (argv.host === '127.0.0.1' ? 8000 : 80)
@@ -14,7 +38,7 @@ let destinationUrl = argv.url || scheme + argv.host + ':' + port
 // log
 let path = require('path')
 let fs = require('fs')
-let logPath = argv.log && path.join(__dirname, argv.log)
+let logPath = argv.logfile && path.join(__dirname, argv.logfile)
 let logStream = logPath ? fs.createWriteStream(logPath) : process.stdout
 
 http.createServer((req, res) => {
@@ -34,12 +58,13 @@ let proxyServer = http.createServer((req, res) => {
         method: req.method
     }
 
-    // Log the req headers
-    let log = new Date().toISOString() + ': ' + JSON.stringify(req.headers) + '\n'
-    process.stdout.write(log)
-    logStream.write(log)
+    let outboundResponse = request(options)
+    req.pipe(outboundResponse)
+    req.pipe(logStream, {end: false})
 
-    req.pipe(request(options)).pipe(res)
+    // log the response
+    outboundResponse.pipe(logStream, {end: false})
+    outboundResponse.pipe(res)
 }).listen(8001)
 
 module.exports = proxyServer
