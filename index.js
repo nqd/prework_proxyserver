@@ -23,6 +23,22 @@ let argv = require('yargs')
         describe: 'Specify a forwarding destination',
         type: 'string'
       },
+      'ps': {
+        alias: 'port-ssl',
+        describe: 'Specify a forwarding port',
+        type: 'number'
+      },
+      'xs': {
+        alias: 'host-ssl',
+        default: '127.0.0.1',
+        describe: 'Specify a forwarding host',
+        type: 'string'
+      },
+      'us': {
+        alias: 'url-ssl',
+        describe: 'Specify a forwarding destination',
+        type: 'string'
+      },
       'l': {
         alias: 'logfile',
         describe: 'Specify a log file',
@@ -31,9 +47,16 @@ let argv = require('yargs')
     })
     .help('h').alias('h', 'help')
     .argv
+
+// http
 let scheme = 'http://'
 let port = argv.port || (argv.host === '127.0.0.1' ? 8000 : 80)
 let destinationUrl = argv.url || scheme + argv.host + ':' + port
+
+// https
+let scheme_s = 'https://'
+let port_s = argv.ps || (argv.xs === '127.0.0.1' ? 4443 : 443)
+let destinationUrl_s = argv.us || scheme_s + argv.xs + ':' + port_s
 
 // log
 let path = require('path')
@@ -48,7 +71,7 @@ http.createServer((req, res) => {
     req.pipe(res)
 }).listen(port)
 
-let proxyServer = http.createServer((req, res) => {
+http.createServer((req, res) => {
     // x-destination-url overrides the destinationUrl
     let url = req.headers['x-destination-url'] || `${destinationUrl}${req.url}`
     console.log(`Proxying request to: ${url}`)
@@ -66,5 +89,3 @@ let proxyServer = http.createServer((req, res) => {
     outboundResponse.pipe(logStream, {end: false})
     outboundResponse.pipe(res)
 }).listen(8001)
-
-module.exports = proxyServer

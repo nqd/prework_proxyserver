@@ -123,6 +123,9 @@ CLI arguments
 - `--host`: The host of the destination server. Defaults to 127.0.0.1.
 - `--url`: A single url that overrides the above host and port.
 - `--logfile`: A file path to redirect logging to.
+- `--port-ssl`: The port of the destination server through https connection. Default to 443 or 4443 when a host-ssl is not specified.
+- `--host-ssl`: The host of the destination server through https connection. Default to 127.0.0.1.
+- `--url-ssl`: A single url that overrides the above ssl host and port.
 
 HTTP header:
 - `x-destination-url`: The destination url on a per request basis.
