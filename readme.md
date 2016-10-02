@@ -16,8 +16,8 @@ Completed:
 * [x] Required: The `--logfile` argument outputs all logs to the file specified instead of stdout
 * [x] Optional: `-h` argument prints CLI API
 * [x] Optional: Supports HTTPS
+* [x] Optional: The `--loglevel` argument sets the logging chattiness
 * [] Optional: The `--exec` argument proxies stdin/stdout to/from the destination program
-* [] Optional: The `--loglevel` argument sets the logging chattiness
 
 
 Walkthough Gif
@@ -195,5 +195,10 @@ CLI arguments
 
 HTTP header:
 - `x-destination-url`: The destination url on a per request basis.
+
+### Logging
+
+Level: `['emerg', 'alert', 'crit', 'err', 'warning', 'notice', 'info', 'debug']`
+
 
 Last: Thanks. Looking forward to seeing you at the bootcamp.
