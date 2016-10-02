@@ -9,7 +9,6 @@ logger.debugLevel = 'warning'
 logger.log = function(logStream, level, message) {
   let levels = ['emerg', 'alert', 'crit', 'err', 'warning', 'notice', 'info', 'debug']
   if (levels.indexOf(level) <= levels.indexOf(this.debugLevel)) {
-    console.log('debug time')
     if (message instanceof stream.Stream) {
       message.pipe(logStream, {end: false})
     }
