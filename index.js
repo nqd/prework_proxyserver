@@ -70,14 +70,19 @@ let path = require('path')
 let logPath = argv.logfile && path.join(__dirname, argv.logfile)
 let logStream = logPath ? fs.createWriteStream(logPath) : process.stdout
 
-http.createServer((req, res) => {
+let echo = (req, res) => {
     for (let header in req.headers) {
         res.setHeader(header, req.headers[header])
     }
     req.pipe(res)
-}).listen(port)
+}
 
 http.createServer((req, res) => {
+    echo(req, res)
+}).listen(port)
+
+// proxy function
+let proxy = (req, res) => {
     // x-destination-url overrides the destinationUrl
     let url = req.headers['x-destination-url'] || `${destinationUrl}${req.url}`
     console.log(`Proxying request to: ${url}`)
@@ -94,23 +99,14 @@ http.createServer((req, res) => {
     // log the response
     outboundResponse.pipe(logStream, {end: false})
     outboundResponse.pipe(res)
+}
+
+// http proxy
+http.createServer((req, res) => {
+    proxy(req, res)
 }).listen(8001)
 
+// https proxy
 https.createServer(options, (req, res) => {
-    // x-destination-url overrides the destinationUrl
-    let url = req.headers['x-destination-url'] || `${destinationUrl}${req.url}`
-    console.log(`Proxying request to: ${url}`)
-    let options = {
-        headers: req.headers,
-        url: url,
-        method: req.method
-    }
-
-    let outboundResponse = request(options)
-    req.pipe(outboundResponse)
-    req.pipe(logStream, {end: false})
-
-    // log the response
-    outboundResponse.pipe(logStream, {end: false})
-    outboundResponse.pipe(res)
+    proxy(req, res)
 }).listen(8002)
