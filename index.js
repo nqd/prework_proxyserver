@@ -27,18 +27,18 @@ let argv = require('yargs')
       },
       'ps': {
         alias: 'port-ssl',
-        describe: 'Specify a forwarding port',
+        describe: 'Specify a forwarding port to secured https server',
         type: 'number'
       },
       'xs': {
         alias: 'host-ssl',
         default: '127.0.0.1',
-        describe: 'Specify a forwarding host',
+        describe: 'Specify a forwarding host to secured https server',
         type: 'string'
       },
       'us': {
         alias: 'url-ssl',
-        describe: 'Specify a forwarding destination',
+        describe: 'Specify a forwarding secured https destination',
         type: 'string'
       },
       'l': {
@@ -74,20 +74,13 @@ let path = require('path')
 let logPath = argv.logfile && path.join(__dirname, argv.logfile)
 let logStream = logPath ? fs.createWriteStream(logPath) : process.stdout
 
+// echo function
 let echo = (req, res) => {
     for (let header in req.headers) {
         res.setHeader(header, req.headers[header])
     }
     req.pipe(res)
 }
-
-http.createServer((req, res) => {
-    echo(req, res)
-}).listen(port)
-
-https.createServer(options_echo, (req, res) => {
-    echo(req, res)
-}).listen(port_s)
 
 // proxy function
 let proxy = (req, res) => {
@@ -97,6 +90,9 @@ let proxy = (req, res) => {
 
     console.log(`Proxying request to: ${url}`)
 
+    // we dont need host and x-destination url
+    delete req.headers.host
+    delete req.headers['x-destination-url']
     let options = {
         headers: req.headers,
         url: url,
@@ -112,12 +108,20 @@ let proxy = (req, res) => {
     outboundResponse.pipe(res)
 }
 
-// http proxy
+// http and https of the echo servers
+http.createServer((req, res) => {
+    echo(req, res)
+}).listen(port)
+
+https.createServer(options_echo, (req, res) => {
+    echo(req, res)
+}).listen(port_s)
+
+// http and https of the proxy servers
 http.createServer((req, res) => {
     proxy(req, res)
 }).listen(8001)
 
-// https proxy
 https.createServer(options_proxy, (req, res) => {
     proxy(req, res)
 }).listen(8002)

@@ -15,9 +15,9 @@ Completed:
 * [x] Required: Client requests and respones are printed to stdout
 * [x] Required: The `--logfile` argument outputs all logs to the file specified instead of stdout
 * [x] Optional: `-h` argument prints CLI API
+* [x] Optional: Supports HTTPS
 * [] Optional: The `--exec` argument proxies stdin/stdout to/from the destination program
 * [] Optional: The `--loglevel` argument sets the logging chattiness
-* [] Optional: Supports HTTPS
 
 
 Walkthough Gif
@@ -103,6 +103,68 @@ curl: (6) Could not resolve host: POST
 hello world%
 ```
 
+And get the github api template:
+
+```
+curl -k https://localhost:8002 -H "x-destination-url: https://api.github.com" -v
+* Rebuilt URL to: https://localhost:8002/
+*   Trying 127.0.0.1...
+* Connected to localhost (127.0.0.1) port 8002 (#0)
+* found 173 certificates in /etc/ssl/certs/ca-certificates.crt
+* found 697 certificates in /etc/ssl/certs
+* ALPN, offering http/1.1
+* SSL connection using TLS1.2 / ECDHE_RSA_AES_128_GCM_SHA256
+* 	 server certificate verification SKIPPED
+* 	 server certificate status verification SKIPPED
+* 	 common name: NQDINH (does not match 'localhost')
+* 	 server certificate expiration date OK
+* 	 server certificate activation date OK
+* 	 certificate public key: RSA
+* 	 certificate version: #1
+* 	 subject: C=VN,ST=SG,L=SG,O=Me,OU=IT,CN=NQDINH,EMAIL=nqdinhddt@gmail.com
+* 	 start date: Sat, 01 Oct 2016 15:07:19 GMT
+* 	 expire date: Tue, 16 Feb 2044 15:07:19 GMT
+* 	 issuer: C=VN,ST=SG,L=SG,O=Me,OU=IT,CN=NQDINH,EMAIL=nqdinhddt@gmail.com
+* 	 compression: NULL
+* ALPN, server did not agree to a protocol
+> GET / HTTP/1.1
+> Host: localhost:8002
+> User-Agent: curl/7.47.0
+> Accept: */*
+> x-destination-url: https://api.github.com
+> 
+< HTTP/1.1 200 OK
+< server: GitHub.com
+< date: Sun, 02 Oct 2016 02:05:58 GMT
+< content-type: application/json; charset=utf-8
+< content-length: 2064
+< connection: close
+< status: 200 OK
+< x-ratelimit-limit: 60
+< x-ratelimit-remaining: 55
+< x-ratelimit-reset: 1475376675
+< cache-control: public, max-age=60, s-maxage=60
+< vary: Accept, Accept-Encoding
+< etag: "d251d84fc3f78921c16c7f9c99d74eae"
+< x-github-media-type: github.v3
+< access-control-expose-headers: ETag, Link, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval
+< access-control-allow-origin: *
+< content-security-policy: default-src 'none'
+< strict-transport-security: max-age=31536000; includeSubdomains; preload
+< x-content-type-options: nosniff
+< x-frame-options: deny
+< x-xss-protection: 1; mode=block
+< x-served-by: 0e17b94a265a427d9cafe798ceea7c02
+< x-github-request-id: 76441449:6FED:1EDC375:57F06B85
+< 
+{
+  "current_user_url": "https://api.github.com/user",
+  ...
+}
+* Closing connection 0
+```
+
+
 ### Configuration
 
 ```
@@ -114,6 +176,10 @@ Options:
   -p, --port     Specify a forwarding port
   -x, --host     Specify a forwarding host       [string] [default: "127.0.0.1"]
   -u, --url      Specify a forwarding destination                       [string]
+  --ps, --port-ssl  Specify a forwarding port to secured https server
+  --xs, --host-ssl  Specify a forwarding host to secured https server
+                                                 [string] [default: "127.0.0.1"]
+  --us, --url-ssl   Specify a forwarding secured https destination      [string]
   -l, --logfile  Specify a log file                                     [string]
   -h, --help     Show help                                             [boolean]
 ```
