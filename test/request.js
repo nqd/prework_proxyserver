@@ -5,6 +5,9 @@ let server = require('../index.js')
 let assert = require('assert')
 let request = require('request')
 
+// we are using self signed cert
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+
 describe('Proxy server', () => {
     it('should perform echo service with get', (done) => {
         request('http://localhost:8001/abc', (err, res, body) => {

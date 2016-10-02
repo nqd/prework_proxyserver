@@ -1,7 +1,9 @@
 'use strict'
 
 let http = require('http')
+let https = require('https')
 let request = require('request')
+let fs = require('fs')
 
 // arg
 let argv = require('yargs')
@@ -58,9 +60,13 @@ let scheme_s = 'https://'
 let port_s = argv.ps || (argv.xs === '127.0.0.1' ? 4443 : 443)
 let destinationUrl_s = argv.us || scheme_s + argv.xs + ':' + port_s
 
+let options = {
+  key: fs.readFileSync('./key/key.pem'), // eslint-disable-line
+  cert: fs.readFileSync('./key/cert.pem') // eslint-disable-line
+}
+
 // log
 let path = require('path')
-let fs = require('fs')
 let logPath = argv.logfile && path.join(__dirname, argv.logfile)
 let logStream = logPath ? fs.createWriteStream(logPath) : process.stdout
 
@@ -89,3 +95,22 @@ http.createServer((req, res) => {
     outboundResponse.pipe(logStream, {end: false})
     outboundResponse.pipe(res)
 }).listen(8001)
+
+https.createServer(options, (req, res) => {
+    // x-destination-url overrides the destinationUrl
+    let url = req.headers['x-destination-url'] || `${destinationUrl}${req.url}`
+    console.log(`Proxying request to: ${url}`)
+    let options = {
+        headers: req.headers,
+        url: url,
+        method: req.method
+    }
+
+    let outboundResponse = request(options)
+    req.pipe(outboundResponse)
+    req.pipe(logStream, {end: false})
+
+    // log the response
+    outboundResponse.pipe(logStream, {end: false})
+    outboundResponse.pipe(res)
+}).listen(8002)
