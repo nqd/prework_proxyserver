@@ -60,9 +60,13 @@ let scheme_s = 'https://'
 let port_s = argv.ps || (argv.xs === '127.0.0.1' ? 4443 : 443)
 let destinationUrl_s = argv.us || scheme_s + argv.xs + ':' + port_s
 
-let options = {
-  key: fs.readFileSync('./key/key.pem'), // eslint-disable-line
-  cert: fs.readFileSync('./key/cert.pem') // eslint-disable-line
+let options_proxy = {
+  key: fs.readFileSync('./key/key_p.pem'), // eslint-disable-line
+  cert: fs.readFileSync('./key/cert_p.pem') // eslint-disable-line
+}
+let options_echo = {
+  key: fs.readFileSync('./key/key_e.pem'), // eslint-disable-line
+  cert: fs.readFileSync('./key/cert_e.pem') // eslint-disable-line
 }
 
 // log
@@ -81,11 +85,18 @@ http.createServer((req, res) => {
     echo(req, res)
 }).listen(port)
 
+https.createServer(options_echo, (req, res) => {
+    echo(req, res)
+}).listen(port_s)
+
 // proxy function
 let proxy = (req, res) => {
     // x-destination-url overrides the destinationUrl
-    let url = req.headers['x-destination-url'] || `${destinationUrl}${req.url}`
+    let url = req.headers['x-destination-url'] ||
+    (req.connection.encrypted? `${destinationUrl_s}${req.url}` : `${destinationUrl}${req.url}`)
+
     console.log(`Proxying request to: ${url}`)
+
     let options = {
         headers: req.headers,
         url: url,
@@ -107,6 +118,6 @@ http.createServer((req, res) => {
 }).listen(8001)
 
 // https proxy
-https.createServer(options, (req, res) => {
+https.createServer(options_proxy, (req, res) => {
     proxy(req, res)
 }).listen(8002)
