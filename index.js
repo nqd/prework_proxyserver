@@ -4,6 +4,7 @@ let http = require('http')
 let https = require('https')
 let request = require('request')
 let fs = require('fs')
+let log = require('./log')
 
 // arg
 let argv = require('yargs')
@@ -60,6 +61,9 @@ let scheme_s = 'https://'
 let port_s = argv.ps || (argv.xs === '127.0.0.1' ? 4443 : 443)
 let destinationUrl_s = argv.us || scheme_s + argv.xs + ':' + port_s
 
+// log
+log.debugLevel = 'info'
+
 let options_proxy = {
   key: fs.readFileSync('./key/key_p.pem'), // eslint-disable-line
   cert: fs.readFileSync('./key/cert_p.pem') // eslint-disable-line
@@ -101,10 +105,10 @@ let proxy = (req, res) => {
 
     let outboundResponse = request(options)
     req.pipe(outboundResponse)
-    req.pipe(logStream, {end: false})
+    log.log(logStream, 'info', req)
 
     // log the response
-    outboundResponse.pipe(logStream, {end: false})
+    log.log(logStream, 'info', outboundResponse)
     outboundResponse.pipe(res)
 }
 
